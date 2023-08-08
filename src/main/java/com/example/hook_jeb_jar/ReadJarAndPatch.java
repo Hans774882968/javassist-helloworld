@@ -2,14 +2,10 @@ package com.example.hook_jeb_jar;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.instrument.ClassFileTransformer;
-import java.lang.instrument.IllegalClassFormatException;
-import java.lang.instrument.Instrumentation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.security.ProtectionDomain;
 import java.util.Date;
 
 import javassist.CannotCompileException;
@@ -17,26 +13,6 @@ import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtMethod;
 import javassist.NotFoundException;
-
-class PatchTransformer implements ClassFileTransformer {
-    public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined,
-            ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
-        if (!className.equals("com/pnfsoftware/jeb/client/Licensing"))
-            return null;
-        String clsName = className.replace("/", ".");
-        CtClass cls = null;
-        try {
-            cls = ClassPool.getDefault().get(clsName);
-            CtMethod mth = cls.getDeclaredMethod("getExpirationTimestamp");
-            mth.setBody("{return real_license_ts + (864000 * license_validity);}");
-            System.out.println("patch success++");
-            return cls.toBytecode();
-        } catch (NotFoundException | javassist.CannotCompileException | java.io.IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-}
 
 public class ReadJarAndPatch {
     public static void patchLicensingClass() throws CannotCompileException, NotFoundException, IOException {
@@ -92,10 +68,6 @@ public class ReadJarAndPatch {
         Method getExpirationTimestamp = licensingClass.getDeclaredMethod("getExpirationTimestamp");
         int timestamp = (int) getExpirationTimestamp.invoke(null);
         System.out.println(new Date(timestamp * 1000L)); // hook 失败
-    }
-
-    public static void premain(String agentArgs, Instrumentation inst) {
-        inst.addTransformer(new PatchTransformer());
     }
 
     public static void main(String[] args) throws CannotCompileException, NotFoundException, IOException,
