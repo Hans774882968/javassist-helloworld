@@ -8,6 +8,8 @@
 
 项目创建：`Maven for Java`插件，`ctrl+shift+P`，`Maven: Create Maven Project`。模板项目输入`quickstart`来搜索。
 
+**作者：[hans774882968](https://blog.csdn.net/hans774882968)以及[hans774882968](https://juejin.cn/user/1464964842528888)以及[hans774882968](https://www.52pojie.cn/home.php?mod=space&uid=1906177)**
+
 ## ReadJarAndPatch.java：尝试 hook 后写入文件
 
 [传送门](./src/main/java/com/example/hook_jeb_jar/ReadJarAndPatch.java)
@@ -84,4 +86,43 @@ java -javaagent:C:\Users\admin\Desktop\hook-jeb-jar-1.0-SNAPSHOT-jar-with-depend
             "projectName": "hook-jeb-jar",
             "vmArgs": "-javaagent:\"<hook-jeb-jar-1.0-SNAPSHOT-jar-with-dependencies.jar所在路径>\"=shouldInsertClassPathJeb"
         }
+```
+
+## JebJarImport.java：引入外部jar包
+
+`pom.xml`将外部jar作为一个本地的dependency引入：
+
+```xml
+<dependency>
+  <groupId>com.pnfsoftware</groupId>
+  <artifactId>jeb</artifactId>
+  <version>1.0.0</version>
+  <scope>system</scope>
+  <systemPath>D:\java-source-codes\jeb.jar</systemPath>
+</dependency>
+```
+
+接下来就能直接正常调用了。`src\main\java\com\example\hook_jeb_jar\JebJarImport.java`：
+
+```java
+package com.example.hook_jeb_jar;
+
+import com.pnfsoftware.jebglobal.sz;
+
+import lombok.extern.slf4j.Slf4j;
+
+import java.util.Date;
+
+import com.pnfsoftware.jeb.client.Licensing;
+
+@Slf4j
+public class JebJarImport {
+    public static void main(String[] args) {
+        String res = sz.RF(new byte[] { -123, 69, 35, 102, 121, 58, 67, 125, 47, 82, 112, 38, 84, 92, 21, 78, 99, 2, 97,
+                99, 2, 97, 99, 2 }, 1, 99);
+        log.info(res);
+        int timestamp = Licensing.getExpirationTimestamp();
+        log.info(new Date(timestamp * 1000L).toString());
+    }
+}
 ```
