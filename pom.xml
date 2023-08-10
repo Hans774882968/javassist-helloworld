@@ -17,6 +17,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>1.7</maven.compiler.source>
     <maven.compiler.target>1.7</maven.compiler.target>
+    <manifestPath>src/main/META-INF/MANIFEST_HOOK_JEB.MF</manifestPath>
   </properties>
 
   <dependencies>
@@ -63,7 +64,7 @@
             <descriptorRef>jar-with-dependencies</descriptorRef>
           </descriptorRefs>
           <archive>
-            <manifestFile>src/main/META-INF/MANIFEST.MF</manifestFile>
+            <manifestFile>${manifestPath}</manifestFile>
           </archive>
         </configuration>
         <executions>

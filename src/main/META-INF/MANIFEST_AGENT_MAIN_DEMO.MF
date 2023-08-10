@@ -1,0 +1,4 @@
+Manifest-Version: 1.0
+Agent-Class: com.example.agent_main_demo.AgentMainDemo
+Can-Redefine-Classes: true
+Can-Retransform-Classes: true
